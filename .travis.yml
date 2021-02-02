@@ -1,0 +1,23 @@
+sudo: require
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t neds75/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true neds75/react-test npm test
+
+after_success:
+  - docker build -t neds75/multi-client ./client
+  - docker build -t neds75/multi-nginx ./nginx
+  - docker build -t neds75/multi-server ./server
+  - docker build -t neds75/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push multi-client
+  - docker push multi-nginx
+  - docker push multi-worker
+  - docker push multi-server
