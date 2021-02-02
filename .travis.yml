@@ -1,5 +1,6 @@
-sudo: require
+sudo: required
 language: generic
+
 services:
   - docker
 
@@ -14,11 +15,10 @@ after_success:
   - docker build -t neds75/multi-nginx ./nginx
   - docker build -t neds75/multi-server ./server
   - docker build -t neds75/multi-worker ./worker
-
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
-  - docker push multi-client
-
-  - docker push multi-nginx
-  - docker push multi-worker
-  - docker push multi-server
+  # Take those images and push them to docker hub
+  - docker push neds75/multi-client
+  - docker push neds75/multi-nginx
+  - docker push neds75/multi-server
+  - docker push neds75/multi-worker
